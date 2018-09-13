@@ -13,11 +13,16 @@ And we compare the received message to the original while counting the bit error
 Comparasion is made through three cases :
 -------------------------------------------
 
--1st Message without any coding 
-  -Message length= 4
-  -Message length= 11
--2nd Message is coded with Hamming(7,4)
--3d  Message is code with Hamming(15,11)
+*1st Message without any coding 
+
+  *Message length= 4
+  
+  *Message length= 11
+  
+*2nd Message is coded with Hamming(7,4)
+
+*3d  Message is code with Hamming(15,11)
+
 
 Decoding :
 --------------
