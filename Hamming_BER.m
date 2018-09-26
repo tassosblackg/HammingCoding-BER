@@ -12,7 +12,7 @@ pkg load signal;
 bits=[1 0];
 n1=7;k1=4; %Hamming (7,4) params
 n2=15;k2=11; %Hamming (15,11) params
-N=10; %number of montecarlo recursions
+N=100000; %number of montecarlo recursions
 SNRdB=[0:1:12]; %SNR vector represnted in dB
 SNR=10.^(SNRdB./10);
 ber_noCoding=zeros(1,length(SNR)); %only for hdd
@@ -85,6 +85,7 @@ for i=1:length(SNR)
     for g=1:length(yII)
       if(zII==H(:,g))
         yII(g)=~yII(g);
+      end
     end
     ber_7hdd(1,i)=ber_7hdd(1,i)+(length(find(yII~=coded_w7)))/n1;
 
@@ -106,20 +107,18 @@ for i=1:length(SNR)
     yIII(yIII>0)=1;
     yIII(yIII<=0)=0;
     zIII=H2*yIII'; %calculate sydrome
-    for k=1:length(yIII) %15
-      if(zIII==H2(:,k)) %if there is an error fix it
-        yIII(k)=~yIII(k);
+    for g2=1:length(yIII) %15
+      if(zIII==H2(:,g2)) %if there is an error fix it
+        yIII(g2)=~yIII(g2);
+      end
     end
     ber_15hdd(1,i)=ber_15hdd(1,i)+(length(find(yIII~=coded_w15)))/n2;
-
-
-
-
 
 
   end
 
 end
+
 ber_noCoding=ber_noCoding/N; %mean value for all ber
 ber_7sdd=ber_7sdd/N;
 ber_7hdd=ber_7hdd/N;
@@ -141,4 +140,4 @@ semilogy(SNRdB,ber_15hdd,"y-*")
 title({"BER for no coding and Hamming","Hamming(7,4),Hamming(15,11)"});
 ylabel({"BER"});
 xlabel({"SNR(dB)"});
-legend("No coding","Hamming7-SDD","Hamming7-HDD","Hamming15-SDD","Hamming15-HDD");
+legend("No coding","Hamming7-SDD","Hamming7-HDD","Hamming15-SDD","Hamming15-HDD")
