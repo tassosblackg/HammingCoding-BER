@@ -12,8 +12,8 @@ pkg load signal;
 bits=[1 0];
 n1=7;k1=4; %Hamming (7,4) params
 n2=15;k2=11; %Hamming (15,11) params
-N=100000; %number of montecarlo recursions
-SNRdB=[0:1:12]; %SNR vector represnted in dB
+N=10000; %number of montecarlo recursions
+SNRdB=[0:3:12]; %SNR vector represnted in dB
 SNR=10.^(SNRdB./10);
 ber_noCoding=zeros(1,length(SNR)); %only for hdd
 ber_7hdd=zeros(1,length(SNR));
@@ -76,15 +76,15 @@ for i=1:length(SNR)
     decoded_w7=dictII(minindx1,:); % decode to the word with the minimu difference
     coded_w7(coded_w7==-1)=0; %revert modulation to take back the original msg
     % count ber
-    ber_7sdd(1,i)=ber_7sdd(1,i)+(length(find(decoded_w7~=coded_w7)))/n1;
+    ber_7sdd(1,i)=ber_7sdd(1,i)+(length(find(decoded_w7(1:4)~=coded_w7(1:4))))/n1;
 
     % HDD
     yII(yII>0)=1;
     yII(yII<=0)=0;
     zII=H*yII';% calculate syndrome
-    for g=1:length(yII)
-      if(zII==H(:,g))
-        yII(g)=~yII(g);
+    for g1=1:length(yII)
+      if (zII==H(:,g1))
+        yII(g1)=~yII(g1);
       end
     end
     ber_7hdd(1,i)=ber_7hdd(1,i)+(length(find(yII~=coded_w7)))/n1;
@@ -95,20 +95,20 @@ for i=1:length(SNR)
     yIII=(sqrt(SNR(i)*coded_w15)+randn(1,n2)); %add noise --chanel output
     % SDD
     for g=1:(k2^2)
-      distanceIII(g)=norm(yIII-dictIII);
+      distanceIII(g)=norm(yIII-dictIII(g,:));
     end
     [minval2,minindx2]=min(distanceIII);
-    decoded_w15=dictIII(minindx2);
+    decoded_w15=dictIII(minindx2,:);
     coded_w15(coded_w15==-1)=0; %revert modulation to take original msg to compare it with output
     %count ber
-    ber_15sdd(1,i)=ber_15sdd(1,i)+(length(find(decoded_w15~=coded_w15)))/n2;
+    ber_15sdd(1,i)=ber_15sdd(1,i)+(length(find(decoded_w15(1:11)~=coded_w15(1:11))))/n2;
 
     % HDD
     yIII(yIII>0)=1;
     yIII(yIII<=0)=0;
     zIII=H2*yIII'; %calculate sydrome
     for g2=1:length(yIII) %15
-      if(zIII==H2(:,g2)) %if there is an error fix it
+      if (zIII==H2(:,g2)) %if there is an error fix it
         yIII(g2)=~yIII(g2);
       end
     end
@@ -129,15 +129,15 @@ figure(1);
 semilogy(SNRdB,ber_noCoding);
 % set(gca,"XLim", [0 13]);
 % set(gca,"YLim", [0 0.5]);
+% hold on;
+% semilogy(SNRdB,ber_7sdd,"r-s")
+% hold on;
+% semilogy (SNRdB,ber_7hdd,"k-s")
 hold on;
-semilogy(SNRdB,ber_7sdd,"r-s")
-hold on;
-semilogy (SNRdB,ber_7hdd,"k-s")
-hold on;
-semilogy(SNRdB,ber_15sdd,"g-*")
-hold on;
-semilogy(SNRdB,ber_15hdd,"y-*")
+semilogy(SNRdB,ber_15sdd,"k-*")
+% hold on;
+% semilogy(SNRdB,ber_15hdd,"y-*")
 title({"BER for no coding and Hamming","Hamming(7,4),Hamming(15,11)"});
 ylabel({"BER"});
 xlabel({"SNR(dB)"});
-legend("No coding","Hamming7-SDD","Hamming7-HDD","Hamming15-SDD","Hamming15-HDD")
+% legend("No coding","Hamming7-SDD","Hamming7-HDD","Hamming15-SDD","Hamming15-HDD")
