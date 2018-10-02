@@ -15,8 +15,6 @@ Comparasion is made through three cases :
 
  * 1st Message without any coding 
 
-   * Message length= 4
-
    * Message length= 11
 
  * 2nd Message is coded with Hamming(7,4)
@@ -27,6 +25,6 @@ Comparasion is made through three cases :
 Decoding :
 --------------
 
-In case 1, we use HDD(Hard Decision Decoding) but in case 2 & 3 we use SDD(Soft Decision Decoding)
+In case 1, we use only HDD(Hard Decision Decoding) but in case 2 & 3 we use HDD and SDD(Soft Decision Decoding)
 
 Finally plot the BER(SNR) function for each case.
